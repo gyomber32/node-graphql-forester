@@ -13,10 +13,16 @@ app.use('/graphql', graphqlHttp({
 
         type Planting {
             id: ID!
-            species: String
-            planted: Int
+            species: String!
+            quantity: Int!
             survived: Int
-            planting_date: String
+            planting_date: String!
+        }
+
+        input PlantingInput {
+            species: String!
+            quantity: Int!
+            planting_date: String!
         }
 
         type RootQuery {
@@ -24,7 +30,7 @@ app.use('/graphql', graphqlHttp({
         }
 
         type RootMutation {
-            createPlanting(species: String, planted: Int, planting_date: String): String
+            createPlanting(plantingInput: PlantingInput): Planting
         }
 
         schema {
