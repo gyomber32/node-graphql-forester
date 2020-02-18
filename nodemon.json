@@ -1,0 +1,7 @@
+{
+    "env": {
+        "MONGO_USER": "gyomber32",
+        "MONGO_PASSWORD": "source32",
+        "MONGO_DB": "forester"
+    }
+}

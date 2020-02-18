@@ -2,17 +2,18 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import graphqlHttp from 'express-graphql';
 import { buildSchema } from 'graphql';
+import mongoose from 'mongoose';
+import Planting from './models/planting';
 
 const app = express();
 
 app.use(bodyParser.json());
 
 app.use('/graphql', graphqlHttp({
-    // does graphql contains Date type -> planting_date
     schema: buildSchema(`
 
         type Planting {
-            id: ID!
+            _id: ID!
             species: String!
             quantity: Int!
             survived: Int
@@ -43,15 +44,27 @@ app.use('/graphql', graphqlHttp({
             // gonna return Plating Array
             return null
         },
-        createPlanting: (args) => {
-            // gonna create Plating
-            const species = args.species;
-            const planted = args.planted;
-            const planting_date = args.planting_date;
-            return null;
+        createPlanting: args => {
+            const planting = new Planting({
+                _id: mongoose.Types.ObjectId(),
+                species: args.plantingInput.species,
+                quantity: +args.plantingInput.quantity,
+                planting_date: new Date(args.plantingInput.planting_date)
+            });
+            return planting.save().then(result => {
+                console.log(result);
+                return { ...result._doc };
+            }).catch(error => {
+                console.error(error);
+                throw error;
+            });
         }
     },
     graphiql: true
 }));
 
-app.listen(3000);
+mongoose.connect(`mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@cluster0-rpz3d.mongodb.net/${process.env.MONGO_DB}?retryWrites=true&w=majority`).then(() => {
+    app.listen(3000);
+}).catch(error => {
+    console.error(error);
+});
