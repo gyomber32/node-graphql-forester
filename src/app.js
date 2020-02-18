@@ -11,7 +11,6 @@ app.use(bodyParser.json());
 
 app.use('/graphql', graphqlHttp({
     schema: buildSchema(`
-
         type Planting {
             _id: ID!
             species: String!
@@ -27,7 +26,7 @@ app.use('/graphql', graphqlHttp({
         }
 
         type RootQuery {
-            planting: [Planting!]!
+            plantings: [Planting!]!
         }
 
         type RootMutation {
@@ -40,9 +39,14 @@ app.use('/graphql', graphqlHttp({
         }
     `),
     rootValue: {
-        planting: () => {
-            // gonna return Plating Array
-            return null
+        plantings: () => {
+            return Planting.find().then(plantings => {
+                return plantings.map(planting => {
+                    return { ...planting._doc }
+                });
+            }).catch(error => {
+                console.error(error);
+            });
         },
         createPlanting: args => {
             const planting = new Planting({
