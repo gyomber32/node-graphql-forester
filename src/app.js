@@ -6,6 +6,7 @@ import mongoose from 'mongoose';
 import Planting from './models/planting';
 import User from './models/user';
 import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
 
 const app = express();
 
@@ -24,7 +25,13 @@ app.use('/graphql', graphqlHttp({
         type User {
             _id: ID!
             email: String!
-            password: String!
+            password: String
+        }
+
+        type Authdata {
+            userId: ID!
+            token: String!
+            tokenExpiration: Int!
         }
 
         input PlantingInput {
@@ -40,6 +47,7 @@ app.use('/graphql', graphqlHttp({
 
         type RootQuery {
             plantings: [Planting!]!
+            login(userInput: UserInput): Authdata!
         }
 
         type RootMutation {
@@ -78,26 +86,48 @@ app.use('/graphql', graphqlHttp({
             });
         },
         createUser: args => {
-            return User.findOne({ email: args.userInput.email})
-            .then(user => {
-                if(!user) {
-                    throw new Error('User already exists!');
-                }
-                return bcrypt.hash(args.userInput.password, 12);
-            }).then(hashedPassword => {
-                const user = new User({
-                    _id: mongoose.Types.ObjectId(),
-                    email: args.userInput.email,
-                    password: hashedPassword
-                });
-                return user.save();
-            }).then(result => {
+            return User.findOne({ email: args.userInput.email })
+                .then(user => {
+                    if (user) {
+                        throw new Error('User already exists!');
+                    }
+                    return bcrypt.hash(args.userInput.password, 12);
+                }).then(hashedPassword => {
+                    const user = new User({
+                        _id: mongoose.Types.ObjectId(),
+                        email: args.userInput.email,
+                        password: hashedPassword
+                    });
+                    return user.save();
+                }).then(result => {
                     console.log(result);
                     return { ...result._doc, password: null };
-            }).catch(error => {
-                console.error(error);
-                throw error;
-            });
+                }).catch(error => {
+                    console.error(error);
+                    throw error;
+                });
+        },
+        login: args => {
+            User.findOne({ email: args.userInput.email })
+                .then(user => {
+                    if (!user) {
+                        throw new Error('User does not exist!');
+                    }
+                    return bcrypt.compare(args.userInput.password, user.password);
+                })
+                .then(isEqual => {
+                    if (!isEqual) {
+                        throw new Error('Invalid credetials!');
+                    }
+                    const token = jwt.sign({ userId: user.id, email: user.email }, 'hatalmashatcentispenisz', {
+                        expiresIn: '1h'
+                    });
+                    return { userId: user._id, token: token, tokenExpiration: 1 };
+                })
+                .catch(error => {
+                    console.error(error);
+                    throw error;
+                });
         }
     },
     graphiql: true

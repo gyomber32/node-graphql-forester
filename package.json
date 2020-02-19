@@ -20,11 +20,13 @@
   },
   "homepage": "https://github.com/gyomber32/node-graphql-forester#readme",
   "dependencies": {
+    "bcryptjs": "^2.4.3",
     "body-parser": "^1.19.0",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "express-graphql": "^0.9.0",
     "graphql": "^14.6.0",
+    "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.9.1"
   },
   "devDependencies": {
