@@ -4,6 +4,8 @@ import graphqlHttp from 'express-graphql';
 import { buildSchema } from 'graphql';
 import mongoose from 'mongoose';
 import Planting from './models/planting';
+import User from './models/user';
+import bcrypt from 'bcryptjs';
 
 const app = express();
 
@@ -19,10 +21,21 @@ app.use('/graphql', graphqlHttp({
             planting_date: String!
         }
 
+        type User {
+            _id: ID!
+            email: String!
+            password: String!
+        }
+
         input PlantingInput {
             species: String!
             quantity: Int!
             planting_date: String!
+        }
+
+        input UserInput {
+            email: String!
+            password: String!
         }
 
         type RootQuery {
@@ -31,6 +44,7 @@ app.use('/graphql', graphqlHttp({
 
         type RootMutation {
             createPlanting(plantingInput: PlantingInput): Planting
+            createUser(userInput: UserInput): User
         }
 
         schema {
@@ -58,6 +72,28 @@ app.use('/graphql', graphqlHttp({
             return planting.save().then(result => {
                 console.log(result);
                 return { ...result._doc };
+            }).catch(error => {
+                console.error(error);
+                throw error;
+            });
+        },
+        createUser: args => {
+            return User.findOne({ email: args.userInput.email})
+            .then(user => {
+                if(!user) {
+                    throw new Error('User already exists!');
+                }
+                return bcrypt.hash(args.userInput.password, 12);
+            }).then(hashedPassword => {
+                const user = new User({
+                    _id: mongoose.Types.ObjectId(),
+                    email: args.userInput.email,
+                    password: hashedPassword
+                });
+                return user.save();
+            }).then(result => {
+                    console.log(result);
+                    return { ...result._doc, password: null };
             }).catch(error => {
                 console.error(error);
                 throw error;
