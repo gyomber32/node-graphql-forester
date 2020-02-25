@@ -1,12 +1,26 @@
+import path from 'path';
+import dotenv from 'dotenv';
+dotenv.config({ path: path.resolve(__dirname, (`../node-graphql-forester/config/.env.${process.env.NODE_ENV}`)).trim() });
+
 import express from 'express';
 import bodyParser from 'body-parser';
 import graphqlHttp from 'express-graphql';
 import { buildSchema } from 'graphql';
 import mongoose from 'mongoose';
-import Planting from './models/planting';
-import User from './models/user';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+
+let Planting;
+let User;
+
+if (process.env.NODE_ENV === 'dev') {
+    Planting = require('./src/models/planting');
+    User = require('./src/models/user');
+};
+if (process.env.NODE_ENV === 'prod') {
+    Planting = require('./dist/models/planting');
+    User = require('./dist/models/user');
+};
 
 const app = express();
 
@@ -129,7 +143,7 @@ app.use('/graphql', graphqlHttp({
     graphiql: true
 }));
 
-mongoose.connect(`mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@cluster0-rpz3d.mongodb.net/${process.env.MONGO_DB}?retryWrites=true&w=majority`, { useNewUrlParser: true, useUnifiedTopology: true }).then(() => {
+mongoose.connect(`mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@${process.env.MONGO_CLUSTER}/${process.env.MONGO_DB}?retryWrites=true&w=majority`, { useNewUrlParser: true, useUnifiedTopology: true }).then(() => {
     app.listen(3000);
     console.log(" \n Forester NodeJS - GrpaphQL server running! \n");
 }).catch(error => {
