@@ -107,34 +107,31 @@ app.use('/graphql', graphqlHttp({
                     throw error;
                 });
         },
-        login: args => {
-            User.findOne({ email: args.userInput.email })
-                .then(user => {
-                    if (!user) {
-                        throw new Error('User does not exist!');
-                    }
-                    return bcrypt.compare(args.userInput.password, user.password);
-                })
-                .then(isEqual => {
-                    if (!isEqual) {
-                        throw new Error('Invalid credetials!');
-                    }
-                    const token = jwt.sign({ userId: user.id, email: user.email }, 'hatalmashatcentispenisz', {
-                        expiresIn: '1h'
-                    });
-                    return { userId: user._id, token: token, tokenExpiration: 1 };
-                })
-                .catch(error => {
-                    console.error(error);
-                    throw error;
+        login: async (args) => {
+            try {
+                const user = await User.findOne({ email: args.userInput.email });
+                if (!user) {
+                    throw new Error('User does not exist!');
+                }
+                const isEqual = await bcrypt.compare(args.userInput.password, user.password);
+                if (!isEqual) {
+                    throw new Error('Invalid credetials!');
+                }
+                const token = jwt.sign({ userId: user.id, email: user.email }, 'hatalmashatcentispenisz', {
+                    expiresIn: '1h'
                 });
+                return { userId: user._id, token: token, tokenExpiration: 1 };
+            } catch (error) {
+                throw error;
+            }
         }
     },
     graphiql: true
 }));
 
-mongoose.connect(`mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@cluster0-rpz3d.mongodb.net/${process.env.MONGO_DB}?retryWrites=true&w=majority`).then(() => {
+mongoose.connect(`mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@cluster0-rpz3d.mongodb.net/${process.env.MONGO_DB}?retryWrites=true&w=majority`, { useNewUrlParser: true, useUnifiedTopology: true }).then(() => {
     app.listen(3000);
+    console.log(" \n Forester NodeJS - GrpaphQL server running! \n");
 }).catch(error => {
     console.error(error);
 });
