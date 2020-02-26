@@ -8,6 +8,14 @@
         ]
     ],
     "plugins": [
-        "@babel/plugin-transform-runtime"
+        "@babel/plugin-transform-runtime",
+        [
+            "transform-inline-environment-variables",
+            {
+                "include": [
+                    "NODE_ENV"
+                ]
+            }
+        ]
     ]
 }
