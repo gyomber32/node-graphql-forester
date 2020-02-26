@@ -5,10 +5,11 @@
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "babel --plugins transform-inline-environment-variables ./src ./app.js --out-dir ./dist",
-    "start": "SET NODE_ENV=dev && nodemon -r esm app.js",
-    "start-dev": "SET NODE_ENV=dev && node -r esm app.js",
-    "start-prod": "SET NODE_ENV=prod && npm run build && node ./dist/app.js"
+    "build": "babel ./src ./app.js --out-dir ./dist",
+    "build-prod": "babel ./src ./app.js --out-dir ./dist",
+    "start": "SET NODE_ENV=dev&& nodemon -r esm app.js",
+    "start-dev": "SET NODE_ENV=dev&& node -r esm app.js",
+    "start-prod": "SET NODE_ENV=prod&& node ./dist/app.js --MONGO_USER=$MONGO_USER --MONGO_PASSWORD=$MONGO_PASSWORD --MONGO_CLUSTER=$MONGO_CLUSTER --MONGO_DB=$MONGO_DB"
   },
   "repository": {
     "type": "git",
@@ -39,7 +40,6 @@
     "@babel/plugin-transform-runtime": "^7.8.3",
     "@babel/preset-env": "^7.8.4",
     "@babel/runtime": "^7.8.4",
-    "babel-plugin-transform-inline-environment-variables": "^0.4.3",
     "nodemon": "^2.0.2"
   }
 }
