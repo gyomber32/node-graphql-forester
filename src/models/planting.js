@@ -25,4 +25,4 @@ const plantingSchema = new Schema({
     { timestamps: true }
 );
 
-export default mongoose.model('Planting', plantingSchema);
+module.exports = mongoose.model('Planting', plantingSchema);
