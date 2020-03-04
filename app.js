@@ -8,7 +8,7 @@ import graphqlHttp from 'express-graphql';
 import mongoose from 'mongoose';
 
 import graphQlSchema from './src/graphql/schema/index';
-import graphQlResolvers from './src/graphql/resolvers/index';
+import rootResolvers from './src/graphql/resolvers/index';
 
 const app = express();
 
@@ -16,7 +16,7 @@ app.use(bodyParser.json());
 
 app.use('/graphql', graphqlHttp({
     schema: graphQlSchema,
-    rootValue: graphQlResolvers,
+    rootValue: rootResolvers,
     graphiql: true
 }));
 
