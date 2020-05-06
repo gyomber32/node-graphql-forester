@@ -1,12 +1,22 @@
 import { buildSchema } from "graphql";
 
 export default buildSchema(`
-        type Planting {
+        type Seedling {
             _id: ID!
             species: String!
-            quantity: Int!
-            survived: Int
-            planting_date: String!
+            plantedQuantity: Int!
+            survivedQuantity: Int
+            datePlanted: String!
+            location: String!
+            picture: String
+        }
+
+        type Seed {
+            _id: ID!
+            species: String!
+            seededQuantity: Int!
+            brairdedQuantity: Int
+            dateSeeded: String!
         }
 
         type User {
@@ -21,10 +31,20 @@ export default buildSchema(`
             tokenExpiration: Int!
         }
 
-        input PlantingInput {
+        input SeedlingInput {
             species: String!
             quantity: Int!
-            planting_date: String!
+            survived: Int
+            datePlanted: String!
+            location: String!
+            picture: String
+        }
+
+        input SeedInput {
+            species: String!
+            seededQuantity: Int!
+            brairdedQuantity: Int
+            dateSeeded: String!
         }
 
         input UserInput {
@@ -33,12 +53,14 @@ export default buildSchema(`
         }
 
         type RootQuery {
-            plantings: [Planting!]!
+            seedlings: [Seedling!]!
+            seeds: [Seed!]!
             login(userInput: UserInput): Authdata!
         }
 
         type RootMutation {
-            createPlanting(plantingInput: PlantingInput): Planting
+            createSeedling(seedlingInput: SeedlingInput): Seedling
+            createSeed(seedInput: SeedInput): Seed
             createUser(userInput: UserInput): User
         }
 

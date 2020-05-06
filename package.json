@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "babel ./src ./app.js --out-dir ./dist",
-    "start": "SET NODE_ENV=dev&& nodemon -r esm app.js",
+    "start": "NODE_ENV=dev&& nodemon -r esm app.js",
     "start-dev": "SET NODE_ENV=dev&& node -r esm app.js",
     "start-prod": "SET NODE_ENV=prod&& node ./dist/app.js --MONGO_USER=$MONGO_USER --MONGO_PASSWORD=$MONGO_PASSWORD --MONGO_CLUSTER=$MONGO_CLUSTER --MONGO_DB=$MONGO_DB"
   },

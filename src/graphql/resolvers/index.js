@@ -1,9 +1,11 @@
 const authResolver = require('./auth');
-const plantingResolver = require('./planting');
+const seedlingResolver = require('./seedling');
+const seedResolver = require('./seed');
 
 const rootResolvers = {
     ...authResolver,
-    ...plantingResolver
+    ...seedlingResolver,
+    ...seedResolver
 }
 
 export default rootResolvers;
