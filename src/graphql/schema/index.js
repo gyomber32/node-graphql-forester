@@ -20,13 +20,13 @@ export default buildSchema(`
         }
 
         type User {
-            _id: ID!
+            _id: ID
             email: String!
             password: String
         }
 
         type Authdata {
-            userId: ID!
+            _id: ID!
             token: String!
             tokenExpiration: Int!
         }

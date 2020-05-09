@@ -2,12 +2,7 @@ import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 
-if (process.env.NODE_ENV === 'dev') {
-    var User = require('../../models/user');
-};
-if (process.env.NODE_ENV === 'prod') {
-    var User = require('./dist/models/user');
-};
+var User = require('../../models/user');
 
 module.exports = {
     createUser: async (args) => {
@@ -32,7 +27,6 @@ module.exports = {
             });
     },
     login: async (args) => {
-        console.log(args)
         try {
             const user = await User.findOne({ email: args.userInput.email });
             if (!user) {
