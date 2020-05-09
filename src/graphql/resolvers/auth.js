@@ -10,7 +10,7 @@ if (process.env.NODE_ENV === 'prod') {
 };
 
 module.exports = {
-    createUser: args => {
+    createUser: async (args) => {
         return User.findOne({ email: args.userInput.email })
             .then(user => {
                 if (user) {
@@ -32,6 +32,7 @@ module.exports = {
             });
     },
     login: async (args) => {
+        console.log(args)
         try {
             const user = await User.findOne({ email: args.userInput.email });
             if (!user) {

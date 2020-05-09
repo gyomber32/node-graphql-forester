@@ -1,30 +1,26 @@
 import mongoose from 'mongoose';
-
-if (process.env.NODE_ENV === 'dev') {
-    var Seedling = require('../../models/seedling');
-};
-if (process.env.NODE_ENV === 'prod') {
-    var Seedling = require('./dist/models/planting');
-};
+var Seedling = require('../../models/seedling');
 
 module.exports = {
-    seedlings: () => {
+    seedlings: async () => {
         return Seedling.find().then(seedlings => {
             return seedlings.map(seedling => {
-                return { ...seedling._doc }
+                return { ...seedling._doc };
             });
         }).catch(error => {
             console.error(error);
+            throw error;
         });
     },
-    createSeedling: args => {
+    createSeedling: async (args) => {
         const seedling = new Seedling({
             _id: mongoose.Types.ObjectId(),
-            species: args.plantingInput.species,
-            plantedQuantity: +args.plantingInput.plantedQuantity,
-            datePlanted: new Date(args.plantingInput.datePlanted),
-            location: args.plantingInput.location,
-            picture: args.plantingInput.picture
+            species: args.seedlingInput.species,
+            plantedQuantity: +args.seedlingInput.plantedQuantity,
+            survivedQuantity: +args.seedlingInput.survivedQuantity,
+            datePlanted: args.seedlingInput.datePlanted,
+            location: args.seedlingInput.location,
+            picture: args.seedlingInput.picture
         });
         return seedling.save().then(seedling => {
             return { ...seedling._doc };

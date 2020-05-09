@@ -18,11 +18,11 @@ const seedSchema = new Schema({
         default: 0
     },
     dateSeeded: {
-        type: Date,
+        type: String,
         required: true
     }
 },
     { timestamps: true }
 );
 
-module.exports = mongoose.model('Seed', seedSchema);
+module.exports = mongoose.model('seeds', seedSchema);

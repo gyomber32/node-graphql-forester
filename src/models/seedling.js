@@ -18,7 +18,7 @@ const seedlingSchema = new Schema({
         default: 0
     },
     datePlanted: {
-        type: Date,
+        type: String,
         required: true
     },
     location: {
@@ -33,4 +33,4 @@ const seedlingSchema = new Schema({
     { timestamps: true }
 );
 
-module.exports = mongoose.model('Seedling', seedlingSchema);
+module.exports = mongoose.model('seedlings', seedlingSchema);

@@ -12,7 +12,16 @@ import rootResolvers from './src/graphql/resolvers/index';
 
 const app = express();
 
+app.use(
+    bodyParser.urlencoded({
+        extended: true
+    })
+);
 app.use(bodyParser.json());
+
+/* app.post('/graphql', (req, res) => {
+    console.log(req.body)
+  }) */
 
 app.use('/graphql', graphqlHttp({
     schema: graphQlSchema,
@@ -20,15 +29,14 @@ app.use('/graphql', graphqlHttp({
     graphiql: true
 }));
 
-if (process.env.NODE_ENV === 'dev') {
-    mongoose.connect(`mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@${process.env.MONGO_CLUSTER}/${process.env.MONGO_DB}?retryWrites=true&w=majority`, { useNewUrlParser: true, useUnifiedTopology: true }).then(() => {
-        app.listen(3000);
-        console.log(" \n Forester NodeJS - GrpaphQL server running! \n");
-    }).catch(error => {
-        console.error(error);
-    });
-};
-if (process.env.NODE_ENV === 'prod') {
+mongoose.connect(`mongodb+srv://gyomber32:source32@cluster0-rpz3d.mongodb.net/forester?retryWrites=true&w=majority`, { useNewUrlParser: true, useUnifiedTopology: true }).then((connection) => {
+    app.listen(3000);
+    console.log(" \n Forester NodeJS - GrpaphQL server running! \n");
+}).catch(error => {
+    console.error(error);
+});
+
+/*if (process.env.NODE_ENV === 'prod') {
     const MONGO_USER = process.argv[0];
     const MONGO_PASSWORD = process.argv[1];
     const MONGO_CLUSTER = process.argv[2];
@@ -38,5 +46,4 @@ if (process.env.NODE_ENV === 'prod') {
         console.log(" \n Forester NodeJS - GrpaphQL server running! \n");
     }).catch(error => {
         console.error(error);
-    });
-};
+    });*/

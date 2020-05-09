@@ -5,7 +5,7 @@ export default buildSchema(`
             _id: ID!
             species: String!
             plantedQuantity: Int!
-            survivedQuantity: Int
+            survivedQuantity: Int!
             datePlanted: String!
             location: String!
             picture: String
@@ -15,7 +15,7 @@ export default buildSchema(`
             _id: ID!
             species: String!
             seededQuantity: Int!
-            brairdedQuantity: Int
+            brairdedQuantity: Int!
             dateSeeded: String!
         }
 
@@ -53,8 +53,8 @@ export default buildSchema(`
         }
 
         type RootQuery {
-            seedlings: [Seedling!]!
-            seeds: [Seed!]!
+            seedlings: [Seedling!]
+            seeds: [Seed!]
             login(userInput: UserInput): Authdata!
         }
 
