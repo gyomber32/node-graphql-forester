@@ -33,8 +33,8 @@ export default buildSchema(`
 
         input SeedlingInput {
             species: String!
-            quantity: Int!
-            survived: Int
+            plantedQuantity: Int!
+            survivedQuantity: Int
             datePlanted: String!
             location: String!
             picture: String
