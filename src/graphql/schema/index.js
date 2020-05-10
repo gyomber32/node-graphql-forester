@@ -31,7 +31,12 @@ export default buildSchema(`
             tokenExpiration: Int!
         }
 
+        type Message {
+            message: String!
+        }
+
         input SeedlingInput {
+            _id: ID
             species: String!
             plantedQuantity: Int!
             survivedQuantity: Int
@@ -41,6 +46,7 @@ export default buildSchema(`
         }
 
         input SeedInput {
+            _id: ID
             species: String!
             seededQuantity: Int!
             brairdedQuantity: Int
@@ -54,14 +60,20 @@ export default buildSchema(`
 
         type RootQuery {
             seedlings: [Seedling!]
+            oneSeedling(_id: ID!): Seedling
             seeds: [Seed!]
+            oneSeed(_id: ID!): Seed 
             login(userInput: UserInput): Authdata!
         }
 
         type RootMutation {
-            createSeedling(seedlingInput: SeedlingInput): Seedling
-            createSeed(seedInput: SeedInput): Seed
-            createUser(userInput: UserInput): User
+            createSeedling(seedlingInput: SeedlingInput!): Seedling
+            updateSeedling(seedlingInput: SeedlingInput!): Seedling
+            deleteSeedling(_id: ID!): Message
+            createSeed(seedInput: SeedInput!): Seed
+            updateSeed(seedInput: SeedInput!): Seed
+            deleteSeed(_id: ID!): Message
+            createUser(userInput: UserInput!): User
         }
 
         schema {
