@@ -1,5 +1,6 @@
 import path from 'path';
 import dotenv from 'dotenv';
+import cors from 'cors';
 dotenv.config({ path: path.resolve(__dirname, (`../node-graphql-forester/config/.env.${process.env.NODE_ENV}`)).trim() });
 
 import express from 'express';
@@ -12,12 +13,17 @@ import rootResolvers from './src/graphql/resolvers/index';
 
 const app = express();
 
+app.use(cors());
 app.use(
     bodyParser.urlencoded({
         extended: true
     })
 );
 app.use(bodyParser.json());
+
+/* app.post('/graphql', (req, res) => {
+    console.log(req);
+}); */
 
 app.use('/graphql', graphqlHttp({
     schema: graphQlSchema,

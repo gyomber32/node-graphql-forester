@@ -26,7 +26,7 @@ export default buildSchema(`
         }
 
         type Authdata {
-            _id: ID!
+            _id: ID
             token: String!
             tokenExpiration: Int!
         }
@@ -46,7 +46,7 @@ export default buildSchema(`
         }
 
         input SeedInput {
-            _id: ID
+            _id: ID!
             species: String!
             seededQuantity: Int!
             brairdedQuantity: Int
