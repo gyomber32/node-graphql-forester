@@ -2,7 +2,10 @@ import mongoose from 'mongoose';
 var Seed = require('../../models/seed');
 
 module.exports = {
-    seeds: async () => {
+    seeds: async (args, req) => {
+        if (!req.isAuth) {
+            throw new Error('Unauthorized!');
+        }
         return Seed.find().then(seeds => {
             return seeds.map(seed => {
                 return { ...seed._doc }
@@ -13,7 +16,10 @@ module.exports = {
         });
     },
 
-    oneSeed: async (args) => {
+    oneSeed: async (args, req) => {
+        if (!req.isAuth) {
+            throw new Error('Unauthorized!');
+        }
         return Seed.findById(args._id).then(seed => {
             if (!seed) {
                 throw new Error('Seed haven\'t been found');
@@ -25,7 +31,10 @@ module.exports = {
         });
     },
 
-    createSeed: async (args) => {
+    createSeed: async (args, req) => {
+        if (!req.isAuth) {
+            throw new Error('Unauthorized!');
+        }
         const seed = new Seed({
             _id: mongoose.Types.ObjectId(),
             species: args.seedInput.species,
@@ -41,7 +50,10 @@ module.exports = {
         });
     },
 
-    updateSeed: async (args) => {
+    updateSeed: async (args, req) => {
+        if (!req.isAuth) {
+            throw new Error('Unauthorized!');
+        }
         const id = args.seedInput._id;
         const updateSeed = {
             species: args.seedInput.species,
@@ -61,7 +73,10 @@ module.exports = {
         };
     },
 
-    deleteSeed: async (args) => {
+    deleteSeed: async (args, req) => {
+        if (!req.isAuth) {
+            throw new Error('Unauthorized!');
+        }
         return Seed.deleteOne({ _id: args._id }).then(deletedSeed => {
             if (deletedSeed.deletedCount !== 1) {
                 throw new Error('Delete was unsuccessful');

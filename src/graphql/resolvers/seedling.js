@@ -2,7 +2,10 @@ import mongoose from 'mongoose';
 var Seedling = require('../../models/seedling');
 
 module.exports = {
-    seedlings: async () => {
+    seedlings: async (args, req) => {
+        if (!req.isAuth) {
+            throw new Error('Unauthorized!');
+        }
         return Seedling.find().then(seedlings => {
             return seedlings.map(seedling => {
                 return { ...seedling._doc };
@@ -13,7 +16,10 @@ module.exports = {
         });
     },
 
-    oneSeedling: async (args) => {
+    oneSeedling: async (args, req) => {
+        if (!req.isAuth) {
+            throw new Error('Unauthorized!');
+        }
         return Seed.findById(args.seedlingInput._id).then(seedling => {
             if (!seedling) {
                 throw new Error('Seedling haven\'t been found');
@@ -25,7 +31,10 @@ module.exports = {
         });
     },
 
-    createSeedling: async (args) => {
+    createSeedling: async (args, req) => {
+        if (!req.isAuth) {
+            throw new Error('Unauthorized!');
+        }
         const seedling = new Seedling({
             _id: mongoose.Types.ObjectId(),
             species: args.seedlingInput.species,
@@ -43,7 +52,10 @@ module.exports = {
         });
     },
 
-    updateSeedling: async (args) => {
+    updateSeedling: async (args, req) => {
+        if (!req.isAuth) {
+            throw new Error('Unauthorized!');
+        }
         const id = args.seedlingInput._id;
         const updateSeedling = {
             species: args.seedlingInput.species,
@@ -65,7 +77,10 @@ module.exports = {
         };
     },
 
-    deleteSeedling: async (args) => {
+    deleteSeedling: async (args, req) => {
+        if (!req.isAuth) {
+            throw new Error('Unauthorized!');
+        }
         return Seedling.deleteOne({ _id: args._id }).then(deletedSeedling => {
             if (deletedSeedling.deletedCount !== 1) {
                 throw new Error('Delete was unsuccessful');

@@ -28,7 +28,7 @@ export default buildSchema(`
         type Authdata {
             _id: ID
             token: String!
-            tokenExpiration: Int!
+            tokenExpiration: String!
         }
 
         type Message {
@@ -46,7 +46,7 @@ export default buildSchema(`
         }
 
         input SeedInput {
-            _id: ID!
+            _id: ID
             species: String!
             seededQuantity: Int!
             brairdedQuantity: Int
@@ -61,9 +61,9 @@ export default buildSchema(`
         type RootQuery {
             seedlings: [Seedling!]
             oneSeedling(_id: ID!): Seedling
-            seeds: [Seed!]
+            seeds: [Seed!]!
             oneSeed(_id: ID!): Seed 
-            login(userInput: UserInput): Authdata!
+            login(userInput: UserInput): Authdata
         }
 
         type RootMutation {

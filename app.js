@@ -11,19 +11,27 @@ import mongoose from 'mongoose';
 import graphQlSchema from './src/graphql/schema/index';
 import rootResolvers from './src/graphql/resolvers/index';
 
+import isAuth from './src/middleware/is-auth';
+
+const defaultOrigin = `http://localhost:3001`;
+const corsConfig = {
+    origin: defaultOrigin,
+    methods: ["OPTIONS", "GET", "POST"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: true,
+    optionsSuccessStatus: 200
+};
+
 const app = express();
 
-app.use(cors());
+app.use(cors(corsConfig));
 app.use(
     bodyParser.urlencoded({
         extended: true
     })
 );
 app.use(bodyParser.json());
-
-/* app.post('/graphql', (req, res) => {
-    console.log(req);
-}); */
+app.use(isAuth);
 
 app.use('/graphql', graphqlHttp({
     schema: graphQlSchema,
