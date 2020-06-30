@@ -7,12 +7,16 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import graphqlHttp from 'express-graphql';
 import mongoose from 'mongoose';
+import multer from "multer";
+import GridFsStorage from "multer-gridfs-storage";
+import crypto from 'crypto';
 
 import graphQlSchema from './src/graphql/schema/index';
 import rootResolvers from './src/graphql/resolvers/index';
 
 import isAuth from './src/middleware/is-auth';
 
+const mongoURI = 'mongodb+srv://gyomber32:source32@cluster0-rpz3d.mongodb.net/forester?retryWrites=true&w=majority';
 const defaultOrigin = `http://localhost:3001`;
 const corsConfig = {
     origin: defaultOrigin,
@@ -22,6 +26,27 @@ const corsConfig = {
     optionsSuccessStatus: 200
 };
 
+const storage = new GridFsStorage({
+    url: mongoURI,
+    file: (req, file) => {
+        return new Promise((resolve, reject) => {
+            crypto.randomBytes(16, (err, buf) => {
+                if (err) {
+                    return reject(err);
+                }
+                const filename = buf.toString('hex') + path.extname(file.originalname);
+                const fileInfo = {
+                    filename: filename,
+                    bucketName: 'pictures'
+                };
+                resolve(fileInfo);
+            });
+        });
+    }
+});
+
+const upload = multer({ storage });
+let gfs;
 const app = express();
 
 app.use(cors(corsConfig));
@@ -30,18 +55,58 @@ app.use(
         extended: true
     })
 );
+
 app.use(bodyParser.json());
 app.use(isAuth);
 
-app.use('/graphql', graphqlHttp({
-    schema: graphQlSchema,
-    rootValue: rootResolvers,
-    graphiql: true
-}));
+app.use('/graphql',
+    graphqlHttp({
+        schema: graphQlSchema,
+        rootValue: rootResolvers,
+        graphiql: true
+    })
+);
+
+app.route('/picture').post(upload.single('picture'), (req, res) => {
+    if (!req.file) {
+        return res.status(203).json({
+            id: "",
+            message: "No picture id provided"
+        });
+    }
+    if (req.file.id) {
+        return res.status(200).json({
+            id: req.file.id,
+            message: "Picture successfully uploaded"
+        });
+    }
+});
+
+app.route('/picture/:id').get((req, res) => {
+    if (!req.params.id) {
+        return res.status(404).json({
+            id: "",
+            message: "No picture id provided"
+        })
+    }
+    gfs.openDownloadStream(new mongoose.Types.ObjectId(req.params.id)).pipe(res);
+});
 
 mongoose.connect(`mongodb+srv://gyomber32:source32@cluster0-rpz3d.mongodb.net/forester?retryWrites=true&w=majority`, { useNewUrlParser: true, useUnifiedTopology: true }).then((connection) => {
     app.listen(3000);
-    console.log(" \n Forester NodeJS - GrpaphQL server running! \n");
+    console.log(" \n Forester NodeJS - GrpaphQL server is running!");
 }).catch(error => {
     console.error(error);
+});
+
+const conn = mongoose.createConnection(mongoURI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+});
+
+conn.once("open", () => {
+    gfs = new mongoose.mongo.GridFSBucket(conn.db, {
+        bucketName: 'pictures'
+    });
+    console.log(" \n Forester NodeJS - Picture storage is up \n");
 });
