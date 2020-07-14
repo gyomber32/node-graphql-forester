@@ -78,6 +78,10 @@ export default buildSchema(`
             password: String!
         }
 
+        type RootSubscription {
+            treesChanged: Tree
+        }
+
         type RootQuery {
             trees:  [Tree!]
             oneTree(_id: ID!): Tree
@@ -104,5 +108,6 @@ export default buildSchema(`
         schema {
             query: RootQuery
             mutation: RootMutation
+            subscription: RootSubscription
         }
     `);

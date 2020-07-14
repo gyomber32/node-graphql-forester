@@ -1,5 +1,7 @@
 import mongoose from 'mongoose';
+
 var Tree = require('../../models/tree');
+const TREE_ADDED = 'TREE_ADDED';
 
 module.exports = {
     trees: async (args, req) => {
@@ -20,7 +22,7 @@ module.exports = {
         if (!req.isAuth) {
             throw new Error('Unauthorized!');
         }
-        return Tree.findById(args.treeInput._id).then(tree => {
+        return Tree.findById(args._id).then(tree => {
             if (!tree) {
                 throw new Error('Tree haven\'t been found');
             }

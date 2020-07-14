@@ -21,7 +21,6 @@
   },
   "homepage": "https://github.com/gyomber32/node-graphql-forester#readme",
   "dependencies": {
-    "apollo-server": "^2.15.0",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.19.0",
     "core-js": "^3.6.4",
@@ -32,15 +31,11 @@
     "express": "^4.17.1",
     "express-graphql": "^0.9.0",
     "graphql": "^14.6.0",
-    "graphql-upload": "^11.0.0",
-    "gridfs-easy": "^1.0.4",
-    "gridfs-stream": "^1.1.1",
     "jsonwebtoken": "^8.5.1",
     "method-override": "^3.0.0",
     "mongoose": "^5.9.1",
-    "mongoose-gridfs": "^1.2.44",
     "multer": "^1.4.2",
-    "multer-gridfs-storage": "^4.2.0"
+    "multer-gridfs-storage": "^4.2.0",
   },
   "devDependencies": {
     "@babel/cli": "^7.8.4",

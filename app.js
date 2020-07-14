@@ -6,6 +6,7 @@ dotenv.config({ path: path.resolve(__dirname, (`../node-graphql-forester/config/
 import express from 'express';
 import bodyParser from 'body-parser';
 import graphqlHttp from 'express-graphql';
+import { createServer } from 'http';
 import mongoose from 'mongoose';
 import multer from "multer";
 import GridFsStorage from "multer-gridfs-storage";
@@ -16,7 +17,9 @@ import rootResolvers from './src/graphql/resolvers/index';
 
 import isAuth from './src/middleware/is-auth';
 
+const PORT = 3000;
 const mongoURI = 'mongodb+srv://gyomber32:source32@cluster0-rpz3d.mongodb.net/forester?retryWrites=true&w=majority';
+
 const defaultOrigin = `http://localhost:3001`;
 const corsConfig = {
     origin: defaultOrigin,
@@ -47,6 +50,7 @@ const storage = new GridFsStorage({
 
 const upload = multer({ storage });
 let gfs;
+
 const app = express();
 
 app.use(cors(corsConfig));
@@ -93,8 +97,8 @@ app.route('/picture/:id').get((req, res) => {
 });
 
 mongoose.connect(`mongodb+srv://gyomber32:source32@cluster0-rpz3d.mongodb.net/forester?retryWrites=true&w=majority`, { useNewUrlParser: true, useUnifiedTopology: true }).then((connection) => {
-    app.listen(3000);
-    console.log(" \n Forester NodeJS - GrpaphQL server is running!");
+    app.listen(PORT);
+    console.log("\n Forester NodeJS - GrpaphQL server is running!");
 }).catch(error => {
     console.error(error);
 });
@@ -108,5 +112,5 @@ conn.once("open", () => {
     gfs = new mongoose.mongo.GridFSBucket(conn.db, {
         bucketName: 'pictures'
     });
-    console.log(" \n Forester NodeJS - Picture storage is up \n");
+    console.log("\n Forester NodeJS - Picture storage is up \n");
 });
