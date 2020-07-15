@@ -6,7 +6,6 @@ dotenv.config({ path: path.resolve(__dirname, (`../node-graphql-forester/config/
 import express from 'express';
 import bodyParser from 'body-parser';
 import graphqlHttp from 'express-graphql';
-import { createServer } from 'http';
 import mongoose from 'mongoose';
 import multer from "multer";
 import GridFsStorage from "multer-gridfs-storage";
@@ -23,7 +22,7 @@ const mongoURI = 'mongodb+srv://gyomber32:source32@cluster0-rpz3d.mongodb.net/fo
 const defaultOrigin = `http://localhost:3001`;
 const corsConfig = {
     origin: defaultOrigin,
-    methods: ["OPTIONS", "GET", "POST"],
+    methods: ["OPTIONS", "GET", "POST", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true,
     optionsSuccessStatus: 200
@@ -94,6 +93,25 @@ app.route('/picture/:id').get((req, res) => {
         })
     }
     gfs.openDownloadStream(new mongoose.Types.ObjectId(req.params.id)).pipe(res);
+});
+
+app.route('/picture/:id').delete((req, res) => {
+    if (!req.params.id) {
+        return res.status(404).json({
+            id: "",
+            message: "No picture id provided"
+        })
+    }
+    gfs.delete(new mongoose.Types.ObjectId(req.params.id), (error) => {
+        if (error) {
+            return res.status(404).json({
+                message: "Delete was unsuccessful"
+            });
+        };
+    });
+    return res.status(200).json({
+        message: "Picture has been successfully deleted"
+    });
 });
 
 mongoose.connect(`mongodb+srv://gyomber32:source32@cluster0-rpz3d.mongodb.net/forester?retryWrites=true&w=majority`, { useNewUrlParser: true, useUnifiedTopology: true }).then((connection) => {
