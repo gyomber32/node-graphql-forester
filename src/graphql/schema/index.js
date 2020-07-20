@@ -7,6 +7,7 @@ export default buildSchema(`
             plantedQuantity: Int!
             survivedQuantity: Int!
             datePlanted: String!
+            daysInSoil: String!
             location: String!
             pictureId: String
         }
@@ -17,6 +18,7 @@ export default buildSchema(`
             plantedQuantity: Int!
             survivedQuantity: Int!
             datePlanted: String!
+            daysInSoil: String!
             location: String!
             picture: String
         }
@@ -27,6 +29,7 @@ export default buildSchema(`
             seededQuantity: Int!
             brairdedQuantity: Int!
             dateSeeded: String!
+            daysInSoil: String!
         }
 
         type User {

@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import parseDate from "../../utils/parseDate";
 var Seed = require('../../models/seed');
 
 module.exports = {
@@ -8,7 +9,7 @@ module.exports = {
         }
         return Seed.find().then(seeds => {
             return seeds.map(seed => {
-                return { ...seed._doc }
+                return {...seed._doc, daysInSoil: parseDate(seed.dateSeeded)}
             });
         }).catch(error => {
             console.error(error);
@@ -24,7 +25,7 @@ module.exports = {
             if (!seed) {
                 throw new Error('Seed haven\'t been found');
             }
-            return { ...seed._doc }
+            return {...seed._doc, daysInSoil: parseDate(seed.dateSeeded)}
         }).catch(error => {
             console.error(error);
             throw error;
@@ -40,10 +41,10 @@ module.exports = {
             species: args.seedInput.species,
             seededQuantity: +args.seedInput.seededQuantity,
             brairdedQuantity: +args.seedInput.brairdedQuantity,
-            dateSeeded: args.seedInput.dateSeeded
+            dateSeeded: new Date(args.seedInput.datePlanted).toDateString(),
         });
         return seed.save().then(seed => {
-            return { ...seed._doc };
+            return {...seed._doc, daysInSoil: parseDate(seed.dateSeeded)}
         }).catch(error => {
             console.error(error);
             throw error;
@@ -59,14 +60,14 @@ module.exports = {
             species: args.seedInput.species,
             seededQuantity: +args.seedInput.seededQuantity,
             brairdedQuantity: +args.seedInput.brairdedQuantity,
-            dateSeeded: args.seedInput.dateSeeded
+            dateSeeded: new Date(args.seedInput.datePlanted).toDateString(),
         };
         try {
             const updatedSeed = await Seed.findByIdAndUpdate(id, updateSeed, { new: true, useFindAndModify: false });
             if (!updatedSeed) {
                 throw new Error('Seed doesn\'t exist');
             };
-            return { ...updatedSeed._doc };
+            return {...updatedSeed._doc, daysInSoil: parseDate(updatedSeed.dateSeeded)}
         } catch (error) {
             console.log(error);
             throw error;

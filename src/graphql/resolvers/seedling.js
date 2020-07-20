@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import parseDate from "../../utils/parseDate";
 var Seedling = require('../../models/seedling');
 
 module.exports = {
@@ -8,7 +9,7 @@ module.exports = {
         }
         return Seedling.find().then(seedlings => {
             return seedlings.map(seedling => {
-                return { ...seedling._doc };
+                return {...seedling._doc, daysInSoil: parseDate(seedling.datePlanted)}
             });
         }).catch(error => {
             console.error(error);
@@ -24,7 +25,7 @@ module.exports = {
             if (!seedling) {
                 throw new Error('Seedling haven\'t been found');
             }
-            return { ...seedling._doc }
+            return {...seedling._doc, daysInSoil: parseDate(seedling.datePlanted)}
         }).catch(error => {
             console.error(error);
             throw error;
@@ -40,12 +41,12 @@ module.exports = {
             species: args.seedlingInput.species,
             plantedQuantity: +args.seedlingInput.plantedQuantity,
             survivedQuantity: +args.seedlingInput.survivedQuantity,
-            datePlanted: args.seedlingInput.datePlanted,
+            datePlanted: new Date(args.seedlingInput.datePlanted).toDateString(),
             location: args.seedlingInput.location,
             picture: args.seedlingInput.picture
         });
         return seedling.save().then(seedling => {
-            return { ...seedling._doc };
+            return {...seedling._doc, daysInSoil: parseDate(seedling.datePlanted)}
         }).catch(error => {
             console.error(error);
             throw error;
@@ -61,7 +62,7 @@ module.exports = {
             species: args.seedlingInput.species,
             plantedQuantity: +args.seedlingInput.plantedQuantity,
             survivedQuantity: +args.seedlingInput.survivedQuantity,
-            datePlanted: args.seedlingInput.datePlanted,
+            datePlanted: new Date(args.seedlingInput.datePlanted).toDateString(),
             location: args.seedlingInput.location,
             picture: args.seedlingInput.picture
         };
@@ -70,7 +71,7 @@ module.exports = {
             if (!updatedSeedling) {
                 throw new Error('Seedling doesn\'t exist');
             };
-            return { ...updatedSeedling._doc };
+            return {...updatedSeedling._doc, daysInSoil: parseDate(updatedSeedling.datePlanted)}
         } catch (error) {
             console.log(error);
             throw error;
