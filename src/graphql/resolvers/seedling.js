@@ -85,8 +85,8 @@ module.exports = {
             if (deletedSeedling.deletedCount !== 1) {
                 throw new Error('Delete was unsuccessful');
             }
-            const message = { message: "Seedling deleted successfully" };
-            return message;
+            const response = { message: "Seedling deleted successfully" };
+            return response;
         }).catch(error => {
             console.error(error);
             throw error;

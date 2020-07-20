@@ -88,7 +88,6 @@ app.route('/picture').post(upload.single('picture'), (req, res) => {
 app.route('/picture/:id').get((req, res) => {
     if (!req.params.id) {
         return res.status(404).json({
-            id: "",
             message: "No picture id provided"
         })
     }
@@ -98,20 +97,19 @@ app.route('/picture/:id').get((req, res) => {
 app.route('/picture/:id').delete((req, res) => {
     if (!req.params.id) {
         return res.status(404).json({
-            id: "",
             message: "No picture id provided"
         })
     }
-    gfs.delete(new mongoose.Types.ObjectId(req.params.id), (error) => {
-        if (error) {
-            return res.status(404).json({
-                message: "Delete was unsuccessful"
-            });
-        };
-    });
-    return res.status(200).json({
-        message: "Picture has been successfully deleted"
-    });
+    try {
+        gfs.delete(new mongoose.Types.ObjectId(req.params.id));
+        return res.status(200).json({
+            message: "Picture has been successfully deleted"
+        });
+    } catch (error) {
+        return res.status(404).json({
+            message: "Delete was unsuccessful"
+        });
+    }
 });
 
 mongoose.connect(`mongodb+srv://gyomber32:source32@cluster0-rpz3d.mongodb.net/forester?retryWrites=true&w=majority`, { useNewUrlParser: true, useUnifiedTopology: true }).then((connection) => {
