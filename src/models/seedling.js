@@ -25,7 +25,7 @@ const seedlingSchema = new Schema({
         type: String,
         required: true
     },
-    picture: {
+    pictureId: {
         type: String,
         required: false
     }

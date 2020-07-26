@@ -8,6 +8,6 @@ const rootResolvers = {
     ...treeResolver,
     ...seedlingResolver,
     ...seedResolver,
-}
+};
 
 export default rootResolvers;

@@ -112,7 +112,7 @@ app.route('/picture/:id').delete((req, res) => {
     }
 });
 
-mongoose.connect(`mongodb+srv://gyomber32:source32@cluster0-rpz3d.mongodb.net/forester?retryWrites=true&w=majority`, { useNewUrlParser: true, useUnifiedTopology: true }).then((connection) => {
+mongoose.connect(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true }).then((connection) => {
     app.listen(PORT);
     console.log("\n Forester NodeJS - GrpaphQL server is running!");
 }).catch(error => {

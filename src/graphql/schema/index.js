@@ -20,7 +20,7 @@ export default buildSchema(`
             datePlanted: String!
             daysInSoil: String!
             location: String!
-            picture: String
+            pictureId: String
         }
 
         type Seed {
@@ -65,7 +65,7 @@ export default buildSchema(`
             survivedQuantity: Int
             datePlanted: String!
             location: String!
-            picture: String
+            pictureId: String
         }
 
         input SeedInput {
@@ -79,10 +79,6 @@ export default buildSchema(`
         input UserInput {
             email: String!
             password: String!
-        }
-
-        type RootSubscription {
-            treesChanged: Tree
         }
 
         type RootQuery {
@@ -111,6 +107,5 @@ export default buildSchema(`
         schema {
             query: RootQuery
             mutation: RootMutation
-            subscription: RootSubscription
         }
     `);

@@ -9,7 +9,7 @@ module.exports = {
         }
         return Seedling.find().then(seedlings => {
             return seedlings.map(seedling => {
-                return {...seedling._doc, daysInSoil: parseDate(seedling.datePlanted)}
+                return { ...seedling._doc, daysInSoil: parseDate(seedling.datePlanted) }
             });
         }).catch(error => {
             console.error(error);
@@ -21,11 +21,11 @@ module.exports = {
         if (!req.isAuth) {
             throw new Error('Unauthorized!');
         }
-        return Seed.findById(args.seedlingInput._id).then(seedling => {
+        return Seedling.findById(args._id).then(seedling => {
             if (!seedling) {
                 throw new Error('Seedling haven\'t been found');
             }
-            return {...seedling._doc, daysInSoil: parseDate(seedling.datePlanted)}
+            return { ...seedling._doc, daysInSoil: parseDate(seedling.datePlanted) }
         }).catch(error => {
             console.error(error);
             throw error;
@@ -40,13 +40,14 @@ module.exports = {
             _id: mongoose.Types.ObjectId(),
             species: args.seedlingInput.species,
             plantedQuantity: +args.seedlingInput.plantedQuantity,
-            survivedQuantity: +args.seedlingInput.survivedQuantity,
+            survivedQuantity: +args.seedlingInput.plantedQuantity,
             datePlanted: new Date(args.seedlingInput.datePlanted).toDateString(),
             location: args.seedlingInput.location,
-            picture: args.seedlingInput.picture
+            picture: args.seedlingInput.picture,
+            pictureId: args.seedlingInput.pictureId
         });
         return seedling.save().then(seedling => {
-            return {...seedling._doc, daysInSoil: parseDate(seedling.datePlanted)}
+            return { ...seedling._doc, daysInSoil: parseDate(seedling.datePlanted) }
         }).catch(error => {
             console.error(error);
             throw error;
@@ -64,14 +65,15 @@ module.exports = {
             survivedQuantity: +args.seedlingInput.survivedQuantity,
             datePlanted: new Date(args.seedlingInput.datePlanted).toDateString(),
             location: args.seedlingInput.location,
-            picture: args.seedlingInput.picture
+            picture: args.seedlingInput.picture,
+            pictureId: args.seedlingInput.pictureId
         };
         try {
             const updatedSeedling = await Seedling.findByIdAndUpdate(id, updateSeedling, { new: true, useFindAndModify: false });
             if (!updatedSeedling) {
                 throw new Error('Seedling doesn\'t exist');
             };
-            return {...updatedSeedling._doc, daysInSoil: parseDate(updatedSeedling.datePlanted)}
+            return { ...updatedSeedling._doc, daysInSoil: parseDate(updatedSeedling.datePlanted) }
         } catch (error) {
             console.log(error);
             throw error;

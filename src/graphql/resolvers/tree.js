@@ -9,7 +9,7 @@ module.exports = {
         }
         return Tree.find().then(trees => {
             return trees.map(tree => {
-                return {...tree._doc, daysInSoil: parseDate(tree.datePlanted)}
+                return { ...tree._doc, daysInSoil: parseDate(tree.datePlanted) }
             });
         }).catch(error => {
             console.error(error);
@@ -25,7 +25,7 @@ module.exports = {
             if (!tree) {
                 throw new Error('Tree haven\'t been found');
             }
-            return {...tree._doc, daysInSoil: parseDate(tree.datePlanted)}
+            return { ...tree._doc, daysInSoil: parseDate(tree.datePlanted) }
         }).catch(error => {
             console.error(error);
             throw error;
@@ -37,13 +37,14 @@ module.exports = {
             _id: mongoose.Types.ObjectId(),
             species: args.treeInput.species,
             plantedQuantity: +args.treeInput.plantedQuantity,
-            survivedQuantity: +args.treeInput.survivedQuantity,
+            /* It's not a mistake, it's how the application works */
+            survivedQuantity: +args.treeInput.plantedQuantity,
             datePlanted: new Date(args.treeInput.datePlanted).toDateString(),
             location: args.treeInput.location,
             pictureId: args.treeInput.pictureId
         });
         return tree.save().then(tree => {
-            return {...tree._doc, daysInSoil: parseDate(tree.datePlanted)}
+            return { ...tree._doc, daysInSoil: parseDate(tree.datePlanted) }
         }).catch(error => {
             console.error(error);
             throw error;
@@ -68,7 +69,7 @@ module.exports = {
             if (!updatedTree) {
                 throw new Error('Tree doesn\'t exist');
             };
-            return {...updatedTree._doc, daysInSoil: parseDate(updatedTree.datePlanted)}
+            return { ...updatedTree._doc, daysInSoil: parseDate(updatedTree.datePlanted) }
         } catch (error) {
             console.log(error);
             throw error;
