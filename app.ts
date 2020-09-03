@@ -7,14 +7,12 @@ import express, { Request, Response } from 'express';
 import bodyParser from 'body-parser';
 import graphqlHttp from 'express-graphql';
 import mongoose from 'mongoose';
-import multer from "multer";
-import MulterGridfsStorage from 'multer-gridfs-storage';
-import crypto from 'crypto';
 
 import graphQlSchema from './src/graphql/schema/index';
 import rootResolvers from './src/graphql/resolvers/index';
 
 import isAuth from './src/middleware/is-auth';
+import uploadImage from "./src/utils/imageUpload";
 
 const PORT = 3000;
 const mongoURI = 'mongodb+srv://gyomber32:source32@cluster0-rpz3d.mongodb.net/forester?retryWrites=true&w=majority';
@@ -28,47 +26,6 @@ const corsConfig = {
     optionsSuccessStatus: 200
 };
 
-const storageGrid = new MulterGridfsStorage({
-    url: mongoURI,
-    file: (req, file) => {
-        return new Promise((resolve, reject) => {
-            crypto.randomBytes(16, (err, buf) => {
-                if (err) {
-                    return reject(err);
-                }
-                const filename = buf.toString('hex') + path.extname(file.originalname);
-                const fileInfo = {
-                    filename: filename,
-                    bucketName: 'pictures'
-                };
-                resolve(fileInfo);
-            });
-        });
-    }
-});
-
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, './uploads/')
-    },
-
-    filename: function (req: any, file: any, cb: any) {
-        cb(null, file.originalname)
-    }
-});
-
-const fileFilter = (req: any, file: any, cb: any) => {
-    if (file.mimetype === "image/jpg" ||
-        file.mimetype === "image/jpeg" ||
-        file.mimetype === "image/png") {
-
-        cb(null, true);
-    } else {
-        cb(new Error("Image uploaded is not of type jpg/jpeg or png"), false);
-    }
-}
-
-const upload = multer({ storage: storage, fileFilter: fileFilter });
 let gfs: any;
 
 const app = express();
@@ -91,7 +48,7 @@ app.use('/graphql',
     })
 );
 
-app.route('/picture').post(upload.single('picture'), (req: any, res: Response) => {
+app.route('/picture').post(uploadImage.single('picture'), (req: any, res: Response) => {
     if (!req.file) {
         return res.status(203).json({
             id: "",

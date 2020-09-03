@@ -1,7 +1,7 @@
-const authResolver = require('./auth');
-const treeResolver = require('./tree');
-const seedlingResolver = require('./seedling');
-const seedResolver = require('./seed');
+import authResolver from './auth';
+import treeResolver from './tree';
+import seedlingResolver from './seedling';
+import seedResolver from './seed';
 
 const rootResolvers = {
     ...authResolver,
