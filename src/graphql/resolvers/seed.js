@@ -83,8 +83,7 @@ module.exports = {
             if (deletedSeed.deletedCount !== 1) {
                 throw new Error('Delete was unsuccessful');
             }
-            const response = { message: "Seed deleted successfully" };
-            return response;
+            return { _id: args._id };
         }).catch(error => {
             console.error(error);
             throw error;

@@ -44,8 +44,8 @@ export default buildSchema(`
             tokenExpiration: String!
         }
 
-        type Message {
-            message: String!
+        type Id {
+            _id: ID!
         }
 
         input TreeInput {
@@ -94,13 +94,13 @@ export default buildSchema(`
         type RootMutation {
             createTree(treeInput: TreeInput!): Tree
             updateTree(treeInput: TreeInput!): Tree
-            deleteTree(_id: ID!): Message
+            deleteTree(_id: ID!): Id
             createSeedling(seedlingInput: SeedlingInput!): Seedling
             updateSeedling(seedlingInput: SeedlingInput!): Seedling
-            deleteSeedling(_id: ID!): Message
+            deleteSeedling(_id: ID!): Id
             createSeed(seedInput: SeedInput!): Seed
             updateSeed(seedInput: SeedInput!): Seed
-            deleteSeed(_id: ID!): Message
+            deleteSeed(_id: ID!): Id
             createUser(userInput: UserInput!): User
         }
 
