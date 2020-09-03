@@ -1,6 +1,6 @@
 import moment from "moment";
 
-const parseDate = (date) => {
+const parseDate = (date: string) => {
     let daysGrowing = "";
     const tempDate = new Date(date);
     const date_planted = moment(tempDate);

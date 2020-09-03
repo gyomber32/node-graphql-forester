@@ -1,9 +1,6 @@
-import mongoose from 'mongoose';
+import { Schema, model, Document } from 'mongoose';
 
-const Schema = mongoose.Schema;
-
-const seedSchema = new Schema({
-    _id: mongoose.Schema.ObjectId,
+const SeedSchema = new Schema({
     species: {
         type: String,
         required: true
@@ -25,4 +22,12 @@ const seedSchema = new Schema({
     { timestamps: true }
 );
 
-module.exports = mongoose.model('seeds', seedSchema);
+interface ISeed extends Document {
+    _id: string;
+    species: string;
+    seededQuantity: number;
+    brairdedQuantity: number;
+    dateSeeded: string;
+};
+
+export default model<ISeed>('seeds', SeedSchema);

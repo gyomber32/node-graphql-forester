@@ -1,9 +1,6 @@
-import mongoose from 'mongoose';
+import { Schema, model, Document } from 'mongoose';
 
-const Schema = mongoose.Schema;
-
-const seedlingSchema = new Schema({
-    _id: mongoose.Schema.ObjectId,
+const TreeSchema = new Schema({
     species: {
         type: String,
         required: true
@@ -33,4 +30,14 @@ const seedlingSchema = new Schema({
     { timestamps: true }
 );
 
-module.exports = mongoose.model('seedlings', seedlingSchema);
+interface ITree extends Document {
+    _id: string;
+    species: string;
+    plantedQuantity: number;
+    survivedQuantity: number;
+    datePlanted: string;
+    location: string;
+    pictureId: string;
+};
+
+export default model<ITree>('trees', TreeSchema);

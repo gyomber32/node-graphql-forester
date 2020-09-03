@@ -1,11 +1,10 @@
 import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import User from '../../models/user';
 
-var User = require('../../models/user');
-
-module.exports = {
-    createUser: async (args) => {
+export default {
+    createUser: async (args: any) => {
         try {
             const existingUser = await User.findOne({ email: args.userInput.email })
             if (existingUser) {
@@ -18,13 +17,13 @@ module.exports = {
                 password: hashedPassword
             });
             const result = await user.save();
-            return { ...result._doc, password: null };
+            return { ...result, password: null };
         } catch (error) {
             console.error(error);
             throw error;
         }
     },
-    login: async (args) => {
+    login: async (args: any) => {
         try {
             const user = await User.findOne({ email: args.userInput.email });
             if (!user) {

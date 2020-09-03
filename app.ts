@@ -3,12 +3,12 @@ import dotenv from 'dotenv';
 import cors from 'cors';
 dotenv.config({ path: path.resolve(__dirname, (`../node-graphql-forester/config/.env.${process.env.NODE_ENV}`)).trim() });
 
-import express from 'express';
+import express, { Request, Response } from 'express';
 import bodyParser from 'body-parser';
 import graphqlHttp from 'express-graphql';
 import mongoose from 'mongoose';
 import multer from "multer";
-import GridFsStorage from "multer-gridfs-storage";
+import MulterGridfsStorage from 'multer-gridfs-storage';
 import crypto from 'crypto';
 
 import graphQlSchema from './src/graphql/schema/index';
@@ -28,7 +28,7 @@ const corsConfig = {
     optionsSuccessStatus: 200
 };
 
-const storage = new GridFsStorage({
+const storageGrid = new MulterGridfsStorage({
     url: mongoURI,
     file: (req, file) => {
         return new Promise((resolve, reject) => {
@@ -47,8 +47,29 @@ const storage = new GridFsStorage({
     }
 });
 
-const upload = multer({ storage });
-let gfs;
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, './uploads/')
+    },
+
+    filename: function (req: any, file: any, cb: any) {
+        cb(null, file.originalname)
+    }
+});
+
+const fileFilter = (req: any, file: any, cb: any) => {
+    if (file.mimetype === "image/jpg" ||
+        file.mimetype === "image/jpeg" ||
+        file.mimetype === "image/png") {
+
+        cb(null, true);
+    } else {
+        cb(new Error("Image uploaded is not of type jpg/jpeg or png"), false);
+    }
+}
+
+const upload = multer({ storage: storage, fileFilter: fileFilter });
+let gfs: any;
 
 const app = express();
 
@@ -70,7 +91,7 @@ app.use('/graphql',
     })
 );
 
-app.route('/picture').post(upload.single('picture'), (req, res) => {
+app.route('/picture').post(upload.single('picture'), (req: any, res: Response) => {
     if (!req.file) {
         return res.status(203).json({
             id: "",
@@ -85,7 +106,7 @@ app.route('/picture').post(upload.single('picture'), (req, res) => {
     }
 });
 
-app.route('/picture/:id').get((req, res) => {
+app.route('/picture/:id').get((req: Request, res: Response) => {
     if (!req.params.id) {
         return res.status(404).json({
             message: "No picture id provided"
@@ -94,7 +115,7 @@ app.route('/picture/:id').get((req, res) => {
     gfs.openDownloadStream(new mongoose.Types.ObjectId(req.params.id)).pipe(res);
 });
 
-app.route('/picture/:id').delete((req, res) => {
+app.route('/picture/:id').delete((req: Request, res: Response) => {
     if (!req.params.id) {
         return res.status(404).json({
             message: "No picture id provided"

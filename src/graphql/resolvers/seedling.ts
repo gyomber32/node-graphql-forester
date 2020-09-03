@@ -1,15 +1,13 @@
 import mongoose from 'mongoose';
 import parseDate from "../../utils/parseDate";
-var Seedling = require('../../models/seedling');
+import Seedling from '../../models/seedling';
+import { Request } from "express";
 
-module.exports = {
-    seedlings: async (args, req) => {
-        if (!req.isAuth) {
-            throw new Error('Unauthorized!');
-        }
+export default {
+    seedlings: async (args: any, req: Request) => {
         return Seedling.find().then(seedlings => {
             return seedlings.map(seedling => {
-                return { ...seedling._doc, daysInSoil: parseDate(seedling.datePlanted) }
+                return { ...seedling, daysInSoil: parseDate(seedling.datePlanted) }
             });
         }).catch(error => {
             console.error(error);
@@ -17,25 +15,19 @@ module.exports = {
         });
     },
 
-    oneSeedling: async (args, req) => {
-        if (!req.isAuth) {
-            throw new Error('Unauthorized!');
-        }
+    oneSeedling: async (args: any, req: Request) => {
         return Seedling.findById(args._id).then(seedling => {
             if (!seedling) {
                 throw new Error('Seedling haven\'t been found');
             }
-            return { ...seedling._doc, daysInSoil: parseDate(seedling.datePlanted) }
+            return { ...seedling, daysInSoil: parseDate(seedling.datePlanted) }
         }).catch(error => {
             console.error(error);
             throw error;
         });
     },
 
-    createSeedling: async (args, req) => {
-        if (!req.isAuth) {
-            throw new Error('Unauthorized!');
-        }
+    createSeedling: async (args: any, req: Request) => {
         const seedling = new Seedling({
             _id: mongoose.Types.ObjectId(),
             species: args.seedlingInput.species,
@@ -47,17 +39,14 @@ module.exports = {
             pictureId: args.seedlingInput.pictureId
         });
         return seedling.save().then(seedling => {
-            return { ...seedling._doc, daysInSoil: parseDate(seedling.datePlanted) }
+            return { ...seedling, daysInSoil: parseDate(seedling.datePlanted) }
         }).catch(error => {
             console.error(error);
             throw error;
         });
     },
 
-    updateSeedling: async (args, req) => {
-        if (!req.isAuth) {
-            throw new Error('Unauthorized!');
-        }
+    updateSeedling: async (args: any, req: Request) => {
         const id = args.seedlingInput._id;
         const updateSeedling = {
             species: args.seedlingInput.species,
@@ -73,17 +62,14 @@ module.exports = {
             if (!updatedSeedling) {
                 throw new Error('Seedling doesn\'t exist');
             };
-            return { ...updatedSeedling._doc, daysInSoil: parseDate(updatedSeedling.datePlanted) }
+            return { ...updatedSeedling, daysInSoil: parseDate(updatedSeedling.datePlanted) }
         } catch (error) {
             console.log(error);
             throw error;
         };
     },
 
-    deleteSeedling: async (args, req) => {
-        if (!req.isAuth) {
-            throw new Error('Unauthorized!');
-        }
+    deleteSeedling: async (args: any, req: Request) => {
         return Seedling.deleteOne({ _id: args._id }).then(deletedSeedling => {
             if (deletedSeedling.deletedCount !== 1) {
                 throw new Error('Delete was unsuccessful');
