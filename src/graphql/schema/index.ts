@@ -81,11 +81,32 @@ export default buildSchema(`
             password: String!
         }
 
+<<<<<<< HEAD
         input CreateUserInput {
             email: String!
             password: String!
             firstName: String!
             lastName: String!
+=======
+        input MigrateSeedInput {
+            _id: ID
+            species: String!
+            plantedQuantity: Int!
+            survivedQuantity: Int!
+            datePlanted: String!
+            location: String!
+            pictureId: String
+        }
+
+        input MigrateSeedlingInput {
+            _id: ID
+            species: String!
+            plantedQuantity: Int!
+            survivedQuantity: Int!
+            datePlanted: String!
+            location: String!
+            pictureId: String
+>>>>>>> migrate functions without test
         }
 
         type RootQuery {

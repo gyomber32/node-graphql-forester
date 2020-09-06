@@ -22,7 +22,7 @@ export default {
         }
         return Seed.findById(args._id).then(seed => {
             if (!seed) {
-                throw new Error('Seed haven\'t been found');
+                throw new Error('Seed hasn\'t been found');
             }
             return { ...seed._doc, daysInSoil: parseDate(seed.dateSeeded) }
         }).catch(error => {
@@ -41,6 +41,7 @@ export default {
             /* It's not a mistake, it's how the application works */
             brairdedQuantity: +args.seedInput.seededQuantity,
             dateSeeded: new Date(args.seedInput.dateSeeded).toDateString(),
+            location: args.seedInput.location
         });
         return seed.save().then(seed => {
             return { ...seed._doc, daysInSoil: parseDate(seed.dateSeeded) }

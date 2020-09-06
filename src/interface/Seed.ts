@@ -10,6 +10,7 @@ interface ISeed extends Document, MongoResult {
     seededQuantity: number;
     brairdedQuantity: number;
     dateSeeded: string;
+    location: string;
 };
 
 export default ISeed;

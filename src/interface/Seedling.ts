@@ -12,6 +12,7 @@ interface ISeedling extends Document, MongoResult {
     datePlanted: string;
     location: string;
     pictureId: string;
+    derivedFromSeed: boolean;
 };
 
 export default ISeedling;
