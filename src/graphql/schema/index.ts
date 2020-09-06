@@ -48,6 +48,10 @@ export default buildSchema(`
             _id: ID!
         }
 
+        type Message {
+            message: String!
+        }
+
         input TreeInput {
             _id: ID
             species: String!
@@ -82,6 +86,7 @@ export default buildSchema(`
         }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
         input CreateUserInput {
             email: String!
             password: String!
@@ -99,6 +104,9 @@ export default buildSchema(`
         }
 
         input MigrateSeedlingInput {
+=======
+        input MigrateInput {
+>>>>>>> resolver
             _id: ID
             species: String!
             plantedQuantity: Int!
@@ -129,7 +137,13 @@ export default buildSchema(`
             createSeed(seedInput: SeedInput!): Seed
             updateSeed(seedInput: SeedInput!): Seed
             deleteSeed(_id: ID!): Id
+<<<<<<< HEAD
             createUser(createUserInput: CreateUserInput!): User
+=======
+            createUser(userInput: UserInput!): User
+            seedToSeedling(migrateInput: MigrateInput): Message
+            seedlingToTree(migrateInput: MigrateInput): Message
+>>>>>>> resolver
         }
 
         schema {
