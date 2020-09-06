@@ -1,13 +1,14 @@
-import mongoose from 'mongoose';
 import parseDate from "../../utils/parseDate";
 import Seed from '../../models/seed';
-import { Request } from "express";
 
 export default {
-    seeds: async (args: any, req: Request) => {
+    seeds: async (args: any, req: any) => {
+        if (!req.isAuth) {
+            throw new Error('Unauthorized!');
+        }
         return Seed.find().then(seeds => {
             return seeds.map(seed => {
-                return { ...seed, daysInSoil: parseDate(seed.dateSeeded) }
+                return { ...seed._doc, daysInSoil: parseDate(seed.dateSeeded) }
             });
         }).catch(error => {
             console.error(error);
@@ -15,21 +16,26 @@ export default {
         });
     },
 
-    oneSeed: async (args: any, req: Request) => {
+    oneSeed: async (args: any, req: any) => {
+        if (!req.isAuth) {
+            throw new Error('Unauthorized!');
+        }
         return Seed.findById(args._id).then(seed => {
             if (!seed) {
                 throw new Error('Seed haven\'t been found');
             }
-            return { ...seed, daysInSoil: parseDate(seed.dateSeeded) }
+            return { ...seed._doc, daysInSoil: parseDate(seed.dateSeeded) }
         }).catch(error => {
             console.error(error);
             throw error;
         });
     },
 
-    createSeed: async (args: any, req: Request) => {
+    createSeed: async (args: any, req: any) => {
+        if (!req.isAuth) {
+            throw new Error('Unauthorized!');
+        }
         const seed = new Seed({
-            _id: mongoose.Types.ObjectId(),
             species: args.seedInput.species,
             seededQuantity: +args.seedInput.seededQuantity,
             /* It's not a mistake, it's how the application works */
@@ -37,14 +43,17 @@ export default {
             dateSeeded: new Date(args.seedInput.dateSeeded).toDateString(),
         });
         return seed.save().then(seed => {
-            return { ...seed, daysInSoil: parseDate(seed.dateSeeded) }
+            return { ...seed._doc, daysInSoil: parseDate(seed.dateSeeded) }
         }).catch(error => {
             console.error(error);
             throw error;
         });
     },
 
-    updateSeed: async (args: any, req: Request) => {
+    updateSeed: async (args: any, req: any) => {
+        if (!req.isAuth) {
+            throw new Error('Unauthorized!');
+        }
         const id = args.seedInput._id;
         const updateSeed = {
             species: args.seedInput.species,
@@ -57,14 +66,17 @@ export default {
             if (!updatedSeed) {
                 throw new Error('Seed doesn\'t exist');
             };
-            return { ...updatedSeed, daysInSoil: parseDate(updatedSeed.dateSeeded) }
+            return { ...updatedSeed._doc, daysInSoil: parseDate(updatedSeed.dateSeeded) }
         } catch (error) {
             console.log(error);
             throw error;
         };
     },
 
-    deleteSeed: async (args: any, req: Request) => {
+    deleteSeed: async (args: any, req: any) => {
+        if (!req.isAuth) {
+            throw new Error('Unauthorized!');
+        };
         return Seed.deleteOne({ _id: args._id }).then(deletedSeed => {
             if (deletedSeed.deletedCount !== 1) {
                 throw new Error('Delete was unsuccessful');

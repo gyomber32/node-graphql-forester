@@ -1,4 +1,5 @@
-import { Schema, model, Document } from 'mongoose';
+import { Schema, model } from 'mongoose';
+import ISeed from "../interface/Seed";
 
 const SeedSchema = new Schema({
     species: {
@@ -21,13 +22,5 @@ const SeedSchema = new Schema({
 },
     { timestamps: true }
 );
-
-interface ISeed extends Document {
-    _id: string;
-    species: string;
-    seededQuantity: number;
-    brairdedQuantity: number;
-    dateSeeded: string;
-};
 
 export default model<ISeed>('seeds', SeedSchema);

@@ -1,19 +1,23 @@
 import jwt from 'jsonwebtoken';
 import { Request, Response, NextFunction } from "express";
 
-const isAuth = (req: Request, res: Response, next: NextFunction) => {
+const isAuth = (req: any, res: Response, next: NextFunction) => {
     const authHeader = req.get('Authorization');
     if (!authHeader) {
-        throw new Error('Unauthorized!');
+        req.isAuth = false;
+        return next();
     }
     const token = authHeader.split(' ')[1];
     if (!token || token === '') {
-        throw new Error('Unauthorized!');
+        req.isAuth = false;
+        return next();
     }
     const decodedToken = jwt.verify(token, 'hatalmashatcentispenisz');
     if (!decodedToken) {
-        throw new Error('Forbidden!');    
+        req.isAuth = false;
+        return next();
     }
+    req.isAuth = true;
     next();
 };
 

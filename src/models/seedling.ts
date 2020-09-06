@@ -1,4 +1,5 @@
-import { Schema, model, Document } from 'mongoose';
+import { Schema, model } from 'mongoose';
+import ISeedling from "../interface/Seedling";
 
 const SeedlingSchema = new Schema({
     species: {
@@ -29,15 +30,5 @@ const SeedlingSchema = new Schema({
 },
     { timestamps: true }
 );
-
-interface ISeedling extends Document {
-    _id: string;
-    species: string;
-    plantedQuantity: number;
-    survivedQuantity: number;
-    datePlanted: string;
-    location: string;
-    pictureId: string;
-};
 
 export default model<ISeedling>('seedlings', SeedlingSchema);

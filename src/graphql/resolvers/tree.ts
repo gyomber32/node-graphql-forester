@@ -1,13 +1,14 @@
-import mongoose from 'mongoose';
 import parseDate from "../../utils/parseDate";
 import Tree from '../../models/tree';
-import { Request } from "express";
 
 export default {
-    trees: async (args: any, req: Request) => {
+    trees: async (args: any, req: any) => {
+        if (!req.isAuth) {
+            throw new Error('Unauthorized!');
+        }
         return Tree.find().then(trees => {
             return trees.map(tree => {
-                return { ...tree, daysInSoil: parseDate(tree.datePlanted) }
+                return { ...tree._doc, daysInSoil: parseDate(tree.datePlanted) }
             });
         }).catch(error => {
             console.error(error);
@@ -15,21 +16,26 @@ export default {
         });
     },
 
-    oneTree: async (args: any, req: Request) => {
+    oneTree: async (args: any, req: any) => {
+        if (!req.isAuth) {
+            throw new Error('Unauthorized!');
+        }
         return Tree.findById(args._id).then(tree => {
             if (!tree) {
                 throw new Error('Tree haven\'t been found');
             }
-            return { ...tree, daysInSoil: parseDate(tree.datePlanted) }
+            return { ...tree._doc, daysInSoil: parseDate(tree.datePlanted) }
         }).catch(error => {
             console.error(error);
             throw error;
         });
     },
 
-    createTree: async (args: any, req: Request) => {
+    createTree: async (args: any, req: any) => {
+        if (!req.isAuth) {
+            throw new Error('Unauthorized!');
+        }
         const tree = new Tree({
-            _id: mongoose.Types.ObjectId(),
             species: args.treeInput.species,
             plantedQuantity: +args.treeInput.plantedQuantity,
             /* It's not a mistake, it's how the application works */
@@ -39,14 +45,17 @@ export default {
             pictureId: args.treeInput.pictureId
         });
         return tree.save().then(tree => {
-            return { ...tree, daysInSoil: parseDate(tree.datePlanted) }
+            return { ...tree._doc, daysInSoil: parseDate(tree.datePlanted) }
         }).catch(error => {
             console.error(error);
             throw error;
         });
     },
 
-    updateTree: async (args: any, req: Request) => {
+    updateTree: async (args: any, req: any) => {
+        if (!req.isAuth) {
+            throw new Error('Unauthorized!');
+        }
         const id = args.treeInput._id;
         const updateTree = {
             species: args.treeInput.species,
@@ -61,14 +70,17 @@ export default {
             if (!updatedTree) {
                 throw new Error('Tree doesn\'t exist');
             };
-            return { ...updatedTree, daysInSoil: parseDate(updatedTree.datePlanted) }
+            return { ...updatedTree._doc, daysInSoil: parseDate(updatedTree.datePlanted) }
         } catch (error) {
             console.log(error);
             throw error;
         };
     },
 
-    deleteTree: async (args: any, req: Request) => {
+    deleteTree: async (args: any, req: any) => {
+        if (!req.isAuth) {
+            throw new Error('Unauthorized!');
+        }
         return Tree.deleteOne({ _id: args._id }).then(deletedTree => {
             if (deletedTree.deletedCount !== 1) {
                 throw new Error('Delete was unsuccessful');

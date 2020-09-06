@@ -1,4 +1,5 @@
-import { Schema, model, Document } from 'mongoose';
+import { Schema, model } from 'mongoose';
+import ITree from "../interface/Tree";
 
 const TreeSchema = new Schema({
     species: {
@@ -29,15 +30,5 @@ const TreeSchema = new Schema({
 },
     { timestamps: true }
 );
-
-interface ITree extends Document {
-    _id: string;
-    species: string;
-    plantedQuantity: number;
-    survivedQuantity: number;
-    datePlanted: string;
-    location: string;
-    pictureId: string;
-};
 
 export default model<ITree>('trees', TreeSchema);

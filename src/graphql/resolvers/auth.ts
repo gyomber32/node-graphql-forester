@@ -1,4 +1,3 @@
-import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import User from '../../models/user';
@@ -12,12 +11,11 @@ export default {
             }
             const hashedPassword = await bcrypt.hash(args.userInput.password, 12);
             const user = new User({
-                _id: mongoose.Types.ObjectId(),
                 email: args.userInput.email,
                 password: hashedPassword
             });
             const result = await user.save();
-            return { ...result, password: null };
+            return { ...result._doc, password: null };
         } catch (error) {
             console.error(error);
             throw error;
