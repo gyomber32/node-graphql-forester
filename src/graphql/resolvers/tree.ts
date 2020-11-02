@@ -16,8 +16,8 @@ export default {
         });
     },
 
-    oneTree: async (args: any, req: any) => {
-        if (!req.isAuth) {
+    oneTree: async (args: any, context: any) => {
+        if (!context.isAuth) {
             throw new Error('Unauthorized!');
         }
         return Tree.findById(args._id).then(tree => {

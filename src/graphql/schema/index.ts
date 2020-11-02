@@ -35,13 +35,13 @@ export default buildSchema(`
         type User {
             _id: ID
             email: String!
-            password: String
+            firstName: String!
+            lastName: String!
+            fullName: String!
         }
 
         type Authdata {
-            _id: ID
-            token: String!
-            tokenExpiration: String!
+            message: String!
         }
 
         type Id {
@@ -81,6 +81,13 @@ export default buildSchema(`
             password: String!
         }
 
+        input CreateUserInput {
+            email: String!
+            password: String!
+            firstName: String!
+            lastName: String!
+        }
+
         type RootQuery {
             trees:  [Tree!]
             oneTree(_id: ID!): Tree
@@ -101,7 +108,7 @@ export default buildSchema(`
             createSeed(seedInput: SeedInput!): Seed
             updateSeed(seedInput: SeedInput!): Seed
             deleteSeed(_id: ID!): Id
-            createUser(userInput: UserInput!): User
+            createUser(createUserInput: CreateUserInput!): User
         }
 
         schema {

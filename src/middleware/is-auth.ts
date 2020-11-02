@@ -1,24 +1,31 @@
 import jwt from 'jsonwebtoken';
-import { Request, Response, NextFunction } from "express";
+import IPayload from '../interface/TokenPayload';
+import refreshTokens from "../utils/refreshTokens";
 
-const isAuth = (req: any, res: Response, next: NextFunction) => {
-    const authHeader = req.get('Authorization');
-    if (!authHeader) {
+const isAuth = async (req: any, res: any) => {
+    if (!req.cookies.accessToken) {
         req.isAuth = false;
-        return next();
+        return req.next();
     }
-    const token = authHeader.split(' ')[1];
-    if (!token || token === '') {
-        req.isAuth = false;
-        return next();
-    }
-    const decodedToken = jwt.verify(token, 'hatalmashatcentispenisz');
-    if (!decodedToken) {
-        req.isAuth = false;
-        return next();
+    const accessToken = req.cookies.accessToken;
+    try {
+        jwt.verify(accessToken, `${process.env.ACCESS_TOKEN_SECRET}`) as IPayload;
+    } catch (error) {
+        try {
+            if (!req.cookies.refreshToken) {
+                req.isAuth = false;
+                return req.next();
+            }
+            const refreshToken = req.cookies.refreshToken;
+            const { newAccessToken, newRefreshToken } = await refreshTokens(refreshToken);
+            res.cookie("accessToken", newAccessToken, { secure: true, httpOnly: true });
+            res.cookie("refreshToken", newRefreshToken, { secure: true, httpOnly: true });
+        } catch (error) {
+            req.isAuth = false;
+            return req.next();
+        }
     }
     req.isAuth = true;
-    next();
 };
 
 export default isAuth;

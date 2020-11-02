@@ -1,11 +1,12 @@
 import path from 'path';
 import dotenv from 'dotenv';
 import cors from 'cors';
-dotenv.config({ path: path.resolve(__dirname, (`../node-graphql-forester/config/.env.${process.env.NODE_ENV}`)).trim() });
+dotenv.config({ path: path.resolve(__dirname, (`config/.env.${process.env.NODE_ENV}`)).trim() });
 
 import express, { Request, Response } from 'express';
 import bodyParser from 'body-parser';
-import graphqlHttp from 'express-graphql';
+import cookieParser from 'cookie-parser';
+import { graphqlExpress } from 'graphql-server-express';
 import mongoose from 'mongoose';
 
 import graphQlSchema from './src/graphql/schema/index';
@@ -14,8 +15,9 @@ import rootResolvers from './src/graphql/resolvers/index';
 import isAuth from './src/middleware/is-auth';
 import uploadImage from "./src/utils/imageUpload";
 
-const PORT = 3000;
-const mongoURI = 'mongodb+srv://gyomber32:source32@cluster0-rpz3d.mongodb.net/forester?retryWrites=true&w=majority';
+const PORT = process.env.PORT;
+const MONGO_URI = process.env.MONGO_URI;
+const DATABASE = process.env.DATABASE;
 
 const defaultOrigin = `http://localhost:3001`;
 const corsConfig = {
@@ -29,23 +31,24 @@ const corsConfig = {
 let gfs: any;
 
 const app = express();
-
 app.use(cors(corsConfig));
 app.use(
     bodyParser.urlencoded({
         extended: true
     })
 );
-
 app.use(bodyParser.json());
+app.use(cookieParser());
 app.use(isAuth);
 
 app.use('/graphql',
-    graphqlHttp({
+    graphqlExpress((req: any) => ({
         schema: graphQlSchema,
         rootValue: rootResolvers,
-        graphiql: true
-    })
+        context: {
+            isAuth: req.isAuth
+        }
+    }))
 );
 
 app.route('/picture').post(uploadImage.single('picture'), (req: any, res: Response) => {
@@ -90,14 +93,14 @@ app.route('/picture/:id').delete((req: Request, res: Response) => {
     }
 });
 
-mongoose.connect(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true }).then((connection) => {
+mongoose.connect(`${MONGO_URI}/${DATABASE}?retryWrites=true&w=majority`, { useNewUrlParser: true, useUnifiedTopology: true }).then((connection) => {
     app.listen(PORT);
     console.log("\n Forester NodeJS - GrpaphQL server is running!");
 }).catch(error => {
     console.error(error);
 });
 
-const conn = mongoose.createConnection(mongoURI, {
+const conn = mongoose.createConnection(`${MONGO_URI}/${DATABASE}?retryWrites=true&w=majority`, {
     useNewUrlParser: true,
     useUnifiedTopology: true
 });

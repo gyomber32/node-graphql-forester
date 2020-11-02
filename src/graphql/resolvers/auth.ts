@@ -1,18 +1,23 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import { Request, Response, NextFunction } from "express";
+import IPayload from '../../interface/TokenPayload';
 import User from '../../models/user';
 
 export default {
     createUser: async (args: any) => {
         try {
-            const existingUser = await User.findOne({ email: args.userInput.email })
+            const existingUser = await User.findOne({ email: args.createUserInput.email })
             if (existingUser) {
                 throw new Error('User already exists!');
             }
-            const hashedPassword = await bcrypt.hash(args.userInput.password, 12);
+            const hashedPassword = await bcrypt.hash(args.createUserInput.password, 12);
             const user = new User({
-                email: args.userInput.email,
-                password: hashedPassword
+                email: args.createUserInput.email,
+                password: hashedPassword,
+                firstName: args.createUserInput.firstName,
+                lastName: args.createUserInput.lastName,
+                fullName: `${args.createUserInput.firstName} ${args.createUserInput.lastName}`
             });
             const result = await user.save();
             return { ...result._doc, password: null };
@@ -21,7 +26,7 @@ export default {
             throw error;
         }
     },
-    login: async (args: any) => {
+    login: async (args: any, context: any) => {
         try {
             const user = await User.findOne({ email: args.userInput.email });
             if (!user) {
@@ -31,10 +36,18 @@ export default {
             if (!isEqual) {
                 throw new Error('Invalid credentials!');
             }
-            const token = jwt.sign({ userId: user.id, email: user.email }, 'hatalmashatcentispenisz', {
-                expiresIn: '1h'
+            const payload: IPayload = { userId: user.id };
+            const accessToken = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET as string, {
+                algorithm: "HS256",
+                expiresIn: Math.floor(Date.now() / 1000) + 120
             });
-            return { _id: user._id, token: token, tokenExpiration: new Date((new Date()).getTime() + 3600000) };
+            const refreshToken = jwt.sign(payload, process.env.REFRESH_TOKEN_SECRET as string, {
+                algorithm: "HS256",
+                expiresIn: process.env.REFRESH_TOKEN_LIFE
+            });
+            context.res.cookie("accessToken", accessToken, { secure: true, httpOnly: true });
+            context.res.cookie("refreshToken", refreshToken, { secure: true, httpOnly: true });
+            return { message: "Successful login" };
         } catch (error) {
             console.log(error);
             return error;
