@@ -45,8 +45,8 @@ export default {
                 algorithm: "HS256",
                 expiresIn: process.env.REFRESH_TOKEN_LIFE
             });
-            context.res.cookie("accessToken", accessToken, { secure: true, httpOnly: true });
-            context.res.cookie("refreshToken", refreshToken, { secure: true, httpOnly: true });
+            context.res.cookie("accessToken", accessToken, { maxAge: process.env.TOKEN_MAX_AGE, secure: process.env.NODE_ENV === "prod", httpOnly: true });
+            context.res.cookie("refreshToken", refreshToken, { maxAge: process.env.TOKEN_MAX_AGE, secure: process.env.NODE_ENV === "prod", httpOnly: true });
             return { message: "Successful login" };
         } catch (error) {
             console.log(error);

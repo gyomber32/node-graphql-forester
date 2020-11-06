@@ -3,29 +3,29 @@ import IPayload from '../interface/TokenPayload';
 import refreshTokens from "../utils/refreshTokens";
 
 const isAuth = async (req: any, res: any) => {
-    if (!req.cookies.accessToken) {
+    const accessToken = req.cookies.accessToken;
+    if (!accessToken) {
         req.isAuth = false;
         return req.next();
     }
-    const accessToken = req.cookies.accessToken;
     try {
         jwt.verify(accessToken, `${process.env.ACCESS_TOKEN_SECRET}`) as IPayload;
     } catch (error) {
-        try {
-            if (!req.cookies.refreshToken) {
-                req.isAuth = false;
-                return req.next();
-            }
-            const refreshToken = req.cookies.refreshToken;
-            const { newAccessToken, newRefreshToken } = await refreshTokens(refreshToken);
-            res.cookie("accessToken", newAccessToken, { secure: true, httpOnly: true });
-            res.cookie("refreshToken", newRefreshToken, { secure: true, httpOnly: true });
-        } catch (error) {
+        const refreshToken = req.cookies.refreshToken;
+        if (!refreshToken) {
             req.isAuth = false;
+            return req.next();
+        }
+        const { newAccessToken, newRefreshToken } = await refreshTokens(refreshToken);
+        if (newAccessToken && newRefreshToken) {
+            res.cookie("accessToken", newAccessToken, { maxAge: process.env.TOKEN_MAX_AGE, secure: process.env.NODE_ENV === "prod", httpOnly: true });
+            res.cookie("refreshToken", newRefreshToken, { maxAge: process.env.TOKEN_MAX_AGE, secure: process.env.NODE_ENV === "prod", httpOnly: true });
+            req.isAuth = true;
             return req.next();
         }
     }
     req.isAuth = true;
+    return req.next();
 };
 
 export default isAuth;

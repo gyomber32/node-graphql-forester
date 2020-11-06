@@ -1,6 +1,5 @@
 import jwt from 'jsonwebtoken';
 import IPayload from '../interface/TokenPayload';
-import user from '../models/user';
 import User from "../models/user";
 
 const refreshTokens = async (refreshToken: string) => {
@@ -20,6 +19,7 @@ const refreshTokens = async (refreshToken: string) => {
     try {
         const user = await User.findById(userId);
     } catch (error) {
+        console.log(error);
         return {};
     }
 

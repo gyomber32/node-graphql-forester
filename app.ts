@@ -19,11 +19,11 @@ const PORT = process.env.PORT;
 const MONGO_URI = process.env.MONGO_URI;
 const DATABASE = process.env.DATABASE;
 
-const defaultOrigin = `http://localhost:3001`;
+const defaultOrigin = process.env.DEFAULT_ORIGIN;
 const corsConfig = {
     origin: defaultOrigin,
     methods: ["OPTIONS", "GET", "POST", "DELETE"],
-    allowedHeaders: ["Content-Type", "Authorization"],
+    allowedHeaders: ["Content-Type", "Authorization", "Access-Control-Allow-Origin"],
     credentials: true,
     optionsSuccessStatus: 200
 };
@@ -42,10 +42,11 @@ app.use(cookieParser());
 app.use(isAuth);
 
 app.use('/graphql',
-    graphqlExpress((req: any) => ({
+    graphqlExpress((req: any, res: any) => ({
         schema: graphQlSchema,
         rootValue: rootResolvers,
         context: {
+            res,
             isAuth: req.isAuth
         }
     }))
