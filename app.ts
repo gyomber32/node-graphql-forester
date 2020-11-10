@@ -15,10 +15,6 @@ import rootResolvers from './src/graphql/resolvers/index';
 import isAuth from './src/middleware/is-auth';
 import uploadImage from "./src/utils/imageUpload";
 
-const PORT = process.env.PORT;
-const MONGO_URI = process.env.MONGO_URI;
-const DATABASE = process.env.DATABASE;
-
 const defaultOrigin = process.env.DEFAULT_ORIGIN;
 const corsConfig = {
     origin: defaultOrigin,
@@ -94,21 +90,23 @@ app.route('/picture/:id').delete((req: Request, res: Response) => {
     }
 });
 
-mongoose.connect(`${MONGO_URI}/${DATABASE}?retryWrites=true&w=majority`, { useNewUrlParser: true, useUnifiedTopology: true }).then((connection) => {
-    app.listen(PORT);
+mongoose.connect(`mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${process.env.DATABASE_URI}/${process.env.DATABASE}?retryWrites=true&w=majority`, { useNewUrlParser: true, useUnifiedTopology: true }).then((connection) => {
+    app.listen(process.env.PORT);
     console.log("\n Forester NodeJS - GrpaphQL server is running!");
 }).catch(error => {
     console.error(error);
 });
 
-const conn = mongoose.createConnection(`${MONGO_URI}/${DATABASE}?retryWrites=true&w=majority`, {
+const conn = mongoose.createConnection(`mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${process.env.DATABASE_URI}/${process.env.DATABASE}?retryWrites=true&w=majority`, {
     useNewUrlParser: true,
     useUnifiedTopology: true
 });
 
+//bucket has to have separated/individual connection
+
 conn.once("open", () => {
     gfs = new mongoose.mongo.GridFSBucket(conn.db, {
-        bucketName: 'pictures'
+        bucketName: process.env.GRIDFS_BUCKET_NAME
     });
     console.log("\n Forester NodeJS - Picture storage is up \n");
 });

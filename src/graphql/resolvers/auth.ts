@@ -39,7 +39,8 @@ export default {
             const payload: IPayload = { userId: user.id };
             const accessToken = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET as string, {
                 algorithm: "HS256",
-                expiresIn: Math.floor(Date.now() / 1000) + 120
+                // Math.floor(Date.now() / 1000) + 120
+                expiresIn: process.env.ACCESS_TOKEN_LIFE
             });
             const refreshToken = jwt.sign(payload, process.env.REFRESH_TOKEN_SECRET as string, {
                 algorithm: "HS256",

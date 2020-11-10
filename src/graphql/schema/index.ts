@@ -85,28 +85,14 @@ export default buildSchema(`
             password: String!
         }
 
-<<<<<<< HEAD
-<<<<<<< HEAD
         input CreateUserInput {
             email: String!
             password: String!
             firstName: String!
             lastName: String!
-=======
-        input MigrateSeedInput {
-            _id: ID
-            species: String!
-            plantedQuantity: Int!
-            survivedQuantity: Int!
-            datePlanted: String!
-            location: String!
-            pictureId: String
         }
 
-        input MigrateSeedlingInput {
-=======
         input MigrateInput {
->>>>>>> resolver
             _id: ID
             species: String!
             plantedQuantity: Int!
@@ -114,7 +100,6 @@ export default buildSchema(`
             datePlanted: String!
             location: String!
             pictureId: String
->>>>>>> migrate functions without test
         }
 
         type RootQuery {
@@ -137,13 +122,9 @@ export default buildSchema(`
             createSeed(seedInput: SeedInput!): Seed
             updateSeed(seedInput: SeedInput!): Seed
             deleteSeed(_id: ID!): Id
-<<<<<<< HEAD
             createUser(createUserInput: CreateUserInput!): User
-=======
-            createUser(userInput: UserInput!): User
-            seedToSeedling(migrateInput: MigrateInput): Message
-            seedlingToTree(migrateInput: MigrateInput): Message
->>>>>>> resolver
+            seedToSeedling(migrateInput: MigrateInput!): Message
+            seedlingToTree(migrateInput: MigrateInput!): Message
         }
 
         schema {
